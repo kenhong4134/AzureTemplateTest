@@ -6,21 +6,34 @@
             "type": "string",
             "metadata": {
                 "description": "description"
-            }
+            },
+            "minLength": 3,
+            "maxLength": 24
+        },
+        "storageSKU": {
+           "type": "string",
+           "metadata": {
+                "description": "description"
+            },
+            "defaultValue": "Standard_LRS",
+            "allowedValues":[ 
+                "Standard_LRS"
+            ]
         }
     },
     "functions": [
     ],
     "variables": {
+        "uniqueStorageName": "[concat(parameters('storageName'),uniqueString(resourceGroup().id))]"
     },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-06-01",
-            "name": "[parameters('storageName')]",
+            "name": "[variables('uniqueStorageName')]",
             "location": "[resourceGroup().location]",
             "sku": {
-                "name": "Standard_LRS"
+                "name": "[parameters('storageSKU')]"
             },
             "tags": {
                 "displayName": "storageaccount1"
@@ -32,5 +45,9 @@
         }
     ],
     "outputs": {
+        "output1": {
+           "type": "object",
+           "value": "[reference(variables('uniqueStorageName')).primaryEndpoints]"
+        }
     }
 }
